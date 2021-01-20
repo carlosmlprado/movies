@@ -22,18 +22,26 @@ public class MoviesServiceImpl implements MoviesService {
 	@Autowired
 	private RestTemplate restTemplate;
 
-	@Value("url")
+	@Value("${url.api}")
 	private String url;
-	@Value("token")
+	@Value("${token}")
 	private String token;
-	@Value("chave.api")
+	@Value("${chave.api}")
 	private String key;
 
 	@Override
 	public MoviesDTO getMoviesByParameter(Integer movieID, String movieName) {
 
 		log.info("Building url");
-		String urlFinal = url.concat("/movies/").concat(String.valueOf(movieID)).concat("?api_key=" + key);
+		String urlFinal;
+		if (0 != movieID) {
+			urlFinal = url.concat("/movie/").concat(String.valueOf(movieID)).concat("?api_key=" + key);
+
+		} else {
+			urlFinal = url.concat("/search/movie?api_key=").concat(key).concat("&query=").concat(movieName);
+
+		}
+
 		HttpEntity<MoviesDTO> response = null;
 
 		try {
