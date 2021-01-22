@@ -28,7 +28,7 @@ public class MoviesDTO implements Serializable {
 	@JsonProperty("original_title")
 	private String originalTitle;
 
-	private String budget;
+	private Integer budget;
 	List<GenresDTO> genres;
 	private String overview;
 	

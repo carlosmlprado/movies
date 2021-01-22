@@ -1,6 +1,7 @@
 package br.com.movies.service.impl;
 
 import java.util.Collections;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import br.com.movies.dto.GenresDTO;
 import br.com.movies.dto.MoviesDTO;
 import br.com.movies.service.MoviesService;
 import lombok.extern.slf4j.Slf4j;
@@ -63,6 +65,12 @@ public class MoviesServiceImpl implements MoviesService {
 		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 		headers.add("Authorization", "Bearer ".concat(token));
 		return headers;
+	}
+
+	@Override
+	public void saveGenres(List<GenresDTO> list) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
