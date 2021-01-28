@@ -7,26 +7,23 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import br.com.movies.dto.GenresAttributesDTO;
+
 import lombok.Data;
 
-@Data
 @Entity
-@Table(name = "movie_genre")
-public class GenreEntity {
+@Data
+@Table(name = "usuario")
+public class UsuarioEntity {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "genre_id")
+	@Column(name = "usuario_id")
 	public Integer id;
 	
-	@Column(name = "genre")
-	private String genre;
+	@Column(name = "name")
+	private String nome;
 	
-	public GenreEntity builder(GenresAttributesDTO genre) {
-		this.setGenre(genre.getGenre());
-		this.setId(genre.getId());
-		return this;
-	}
+	@Column(name = "key_password")
+	private String key;
 
 }

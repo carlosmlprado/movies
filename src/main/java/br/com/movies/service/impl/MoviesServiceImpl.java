@@ -1,5 +1,6 @@
 package br.com.movies.service.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -10,10 +11,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import br.com.movies.dao.GenresDAO;
+import br.com.movies.dao.MoviesDAO;
+import br.com.movies.dto.GenresAttributesDTO;
 import br.com.movies.dto.GenresDTO;
 import br.com.movies.dto.MoviesDTO;
+import br.com.movies.entity.GenreEntity;
 import br.com.movies.service.MoviesService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,6 +30,9 @@ public class MoviesServiceImpl implements MoviesService {
 	@Autowired
 	private RestTemplate restTemplate;
 
+	private MoviesDAO moviesDAO;
+	private GenresDAO genresDAO;
+
 	@Value("${url.api}")
 	private String url;
 	@Value("${token}")
@@ -32,7 +41,7 @@ public class MoviesServiceImpl implements MoviesService {
 	private String key;
 
 	@Override
-	public MoviesDTO getMoviesByParameter(Integer movieID, String movieName) {
+	public MoviesDTO getMoviesByParameter(Integer movieID, String movieName, Boolean saveAsFavorite) {
 
 		log.info("Building url");
 		String urlFinal;
@@ -52,11 +61,15 @@ public class MoviesServiceImpl implements MoviesService {
 
 			response = restTemplate.exchange(urlFinal, HttpMethod.GET, new HttpEntity<>("parameters", headers),
 					MoviesDTO.class);
+
+			if (saveAsFavorite) {
+//				persist.
+				
+			}
 		} catch (Exception e) {
 			log.error("Error calling API");
 			return null;
 		}
-
 		return response.getBody();
 	}
 
@@ -68,9 +81,45 @@ public class MoviesServiceImpl implements MoviesService {
 	}
 
 	@Override
-	public void saveGenres(List<GenresDTO> list) {
-		// TODO Auto-generated method stub
-		
+	public Boolean getGenres() {
+
+		if (veriFyGenreData() == 0) {
+
+			log.info("Building url");
+			String urlGenres = url.concat("/genre/movie/list?api_key=").concat(key).concat("&language=en-US");
+
+			HttpEntity<GenresDTO> response = null;
+			HttpHeaders headers = mountHeaders();
+
+			try {
+				response = restTemplate.exchange(urlGenres, HttpMethod.GET, new HttpEntity<>("parameters", headers),
+						GenresDTO.class);
+
+				List<GenreEntity> genresEntity = new ArrayList<>();
+				for (GenresAttributesDTO genre : response.getBody().getGenres()) {
+					GenreEntity genreEntity = new GenreEntity();
+
+					genreEntity.builder(genre);
+					genresEntity.add(genreEntity);
+
+				}
+
+				genresDAO.create(genresEntity);
+
+				return true;
+
+			} catch (Exception e) {
+				log.error("Error consulting API");
+				return false;
+
+			}
+		}
+		return true;
+	}
+
+	@Transactional(readOnly = true)
+	private Integer veriFyGenreData() {
+		return moviesDAO.veriFyGenreData();
 	}
 
 }

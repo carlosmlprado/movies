@@ -20,6 +20,7 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/movies")
 public class MoviesREST {
 
+//	Not using Autowired to avoid memory leak
 	private MoviesService moviesService;
 
 	@GetMapping("/")
@@ -27,20 +28,30 @@ public class MoviesREST {
 		return "It works!";
 	}
 
-	@GetMapping("/getMovies/{movieId}/{movieName}")
+	@GetMapping("/getMovies/{movieId}/{movieName}/{saveAsFavorite}")
 	public ResponseEntity<?> getMovies(@PathVariable(value = "movieId") Integer movieId,
-			@PathVariable(value = "movieName") String movieName) {
+			@PathVariable(value = "movieName") String movieName,
+			@PathVariable(value = "saveAsFavorite") Boolean saveAsFavorite) {
 
-		MoviesDTO response = moviesService.getMoviesByParameter(movieId, movieName);
+		MoviesDTO response = moviesService.getMoviesByParameter(movieId, movieName, saveAsFavorite);
 
 		if (null != response) {
-			return new ResponseEntity<>(new Gson().toJson(response),
-					HttpStatus.OK);
+			return new ResponseEntity<>(new Gson().toJson(response), HttpStatus.OK);
 		} else {
-			return new ResponseEntity<>(new Gson().toJson(response),
-					HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(new Gson().toJson(response), HttpStatus.NOT_FOUND);
 		}
+	}
 
+	@GetMapping("/getGenres")
+	public ResponseEntity<?> getGenre() {
+
+		Boolean persisted = moviesService.getGenres();
+
+		if (persisted) {
+			return new ResponseEntity<>(new Gson().toJson(persisted), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(new Gson().toJson(persisted), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 }

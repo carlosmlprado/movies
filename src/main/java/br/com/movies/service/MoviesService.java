@@ -1,8 +1,5 @@
 package br.com.movies.service;
 
-import java.util.List;
-
-import br.com.movies.dto.GenresDTO;
 import br.com.movies.dto.MoviesDTO;
 
 public interface MoviesService {
@@ -11,11 +8,10 @@ public interface MoviesService {
 	 * Return the movie by its ID
 	 * @return
 	 */
-	public MoviesDTO getMoviesByParameter(Integer movieID, String movieName);
+	public MoviesDTO getMoviesByParameter(Integer movieID, String movieName, Boolean saveAsFavorite);
 	
 	/**
-	 * Method to save the genres and use it for anothers calls that the genre only come by id.
-	 * @param list
+	 * Method to get the genres and persist at the first time the application runs.
 	 */
-	public void saveGenres(List<GenresDTO> list);
+	public Boolean getGenres();
 }
