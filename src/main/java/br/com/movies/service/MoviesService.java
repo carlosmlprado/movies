@@ -1,5 +1,6 @@
 package br.com.movies.service;
 
+import br.com.movies.dto.GenresDTO;
 import br.com.movies.dto.MoviesDTO;
 
 public interface MoviesService {
@@ -13,5 +14,5 @@ public interface MoviesService {
 	/**
 	 * Method to get the genres and persist at the first time the application runs.
 	 */
-	public Boolean getGenres();
+	public GenresDTO getGenres();
 }

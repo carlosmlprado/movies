@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
 
+import br.com.movies.dto.GenresDTO;
 import br.com.movies.dto.MoviesDTO;
 import br.com.movies.service.MoviesService;
 import lombok.AllArgsConstructor;
@@ -41,17 +42,13 @@ public class MoviesREST {
 			return new ResponseEntity<>(new Gson().toJson(response), HttpStatus.NOT_FOUND);
 		}
 	}
-
+	
 	@GetMapping("/getGenres")
-	public ResponseEntity<?> getGenre() {
-
-		Boolean persisted = moviesService.getGenres();
-
-		if (persisted) {
-			return new ResponseEntity<>(new Gson().toJson(persisted), HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(new Gson().toJson(persisted), HttpStatus.INTERNAL_SERVER_ERROR);
+		public ResponseEntity<?> getGenres(){
+			
+			GenresDTO response = moviesService.getGenres();
+			return new ResponseEntity<>(new Gson().toJson(response), HttpStatus.OK);
+			
 		}
-	}
 
 }

@@ -1,22 +1,28 @@
 package br.com.movies.dao.impl;
 
+import java.math.BigInteger;
+
 import org.hibernate.query.Query;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.hibernate.BasicEntity;
 import br.com.movies.dao.MoviesDAO;
 import br.com.movies.entity.MoviesEntity;
 
+@Repository("moviesDAO")
 public class MoviesDAOImpl extends BasicEntity<MoviesEntity, Integer> implements MoviesDAO {
 
 	@Override
-	public Integer veriFyGenreData() {
+	@Transactional(readOnly = true)
+	public BigInteger veriFyGenreData() {
 
 		StringBuilder sql = new StringBuilder();
 
-		sql.append("Select count(id) from movie_genre limit 1");
+		sql.append("Select count(*) from movie_genre");
 
-		Query query = getHibernateTemplate().getSessionFactory().getCurrentSession().createQuery(sql.toString());
-		return (Integer) query.uniqueResult();
+		Query query = getHibernateTemplate().getSessionFactory().getCurrentSession().createSQLQuery(sql.toString());
+		return (BigInteger) query.uniqueResult();
 	}
 
 }

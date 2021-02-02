@@ -1,5 +1,6 @@
 package br.com.movies.service.impl;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -21,6 +22,7 @@ import br.com.movies.dto.GenresDTO;
 import br.com.movies.dto.MoviesDTO;
 import br.com.movies.entity.GenreEntity;
 import br.com.movies.service.MoviesService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -29,6 +31,12 @@ public class MoviesServiceImpl implements MoviesService {
 
 	@Autowired
 	private RestTemplate restTemplate;
+
+	public MoviesServiceImpl(MoviesDAO moviesDAO, GenresDAO genresDAO) {
+		super();
+		this.moviesDAO = moviesDAO;
+		this.genresDAO = genresDAO;
+	}
 
 	private MoviesDAO moviesDAO;
 	private GenresDAO genresDAO;
@@ -50,7 +58,6 @@ public class MoviesServiceImpl implements MoviesService {
 
 		} else {
 			urlFinal = url.concat("/search/movie?api_key=").concat(key).concat("&query=").concat(movieName);
-
 		}
 
 		HttpEntity<MoviesDTO> response = null;
@@ -64,13 +71,14 @@ public class MoviesServiceImpl implements MoviesService {
 
 			if (saveAsFavorite) {
 //				persist.
-				
+
 			}
 		} catch (Exception e) {
 			log.error("Error calling API");
 			return null;
 		}
 		return response.getBody();
+
 	}
 
 	private HttpHeaders mountHeaders() {
@@ -81,9 +89,10 @@ public class MoviesServiceImpl implements MoviesService {
 	}
 
 	@Override
-	public Boolean getGenres() {
-
-		if (veriFyGenreData() == 0) {
+	public GenresDTO getGenres() {
+		
+		log.info("Verify if genres already were saved");
+		if (veriFyGenreData().equals(new BigInteger("0"))) {
 
 			log.info("Building url");
 			String urlGenres = url.concat("/genre/movie/list?api_key=").concat(key).concat("&language=en-US");
@@ -96,29 +105,29 @@ public class MoviesServiceImpl implements MoviesService {
 						GenresDTO.class);
 
 				List<GenreEntity> genresEntity = new ArrayList<>();
-				for (GenresAttributesDTO genre : response.getBody().getGenres()) {
+
+				response.getBody().getGenres().stream().forEach(r -> {
 					GenreEntity genreEntity = new GenreEntity();
 
-					genreEntity.builder(genre);
+					genreEntity.builder(r);
 					genresEntity.add(genreEntity);
-
-				}
+				});
 
 				genresDAO.create(genresEntity);
 
-				return true;
+				return response.getBody();
 
 			} catch (Exception e) {
 				log.error("Error consulting API");
-				return false;
+				return response.getBody();
 
 			}
 		}
-		return true;
+		return null;
 	}
 
 	@Transactional(readOnly = true)
-	private Integer veriFyGenreData() {
+	private BigInteger veriFyGenreData() {
 		return moviesDAO.veriFyGenreData();
 	}
 
