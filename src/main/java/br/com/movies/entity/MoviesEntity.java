@@ -43,12 +43,15 @@ public class MoviesEntity {
 	@Column(name = "overview")
 	private String overview;
 
+	@Column(name = "movie_api_id")
+	private Integer movieApiId;
+
 	@ManyToOne
 	@JoinColumn(name = "genre_id")
 	private GenreEntity genre;
-	
+
 	public MoviesEntity builder(MoviesDTO movies, GenreEntity genre) {
-		
+
 		this.setIsAbove18(movies.getIsAbove18());
 		this.setBackDropPath(movies.getBackDropPath());
 		this.setHomePage(movies.getHomePage());
@@ -57,7 +60,8 @@ public class MoviesEntity {
 		this.setBudget(movies.getBudget());
 		this.setOverview(movies.getOverview());
 		this.setGenre(genre);
-		
+		this.setMovieApiId(movies.getMovieApiId());
+
 		return this;
 	}
 

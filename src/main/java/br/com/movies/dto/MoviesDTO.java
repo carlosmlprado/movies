@@ -29,11 +29,16 @@ public class MoviesDTO implements Serializable {
 	private String originalTitle;
 
 	private Integer budget;
-	List<GenresDTO> genres;
+	
+	List<GenresAttributesDTO> genres;
+	
 	private String overview;
 	
 //	Search by name
 	private Integer page;
 	List<ResultsDTO> results;
+	
+	@JsonProperty("id")
+	private Integer movieApiId;
 
 }

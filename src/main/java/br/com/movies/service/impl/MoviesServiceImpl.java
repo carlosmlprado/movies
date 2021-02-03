@@ -17,12 +17,11 @@ import org.springframework.web.client.RestTemplate;
 
 import br.com.movies.dao.GenresDAO;
 import br.com.movies.dao.MoviesDAO;
-import br.com.movies.dto.GenresAttributesDTO;
 import br.com.movies.dto.GenresDTO;
 import br.com.movies.dto.MoviesDTO;
 import br.com.movies.entity.GenreEntity;
+import br.com.movies.entity.MoviesEntity;
 import br.com.movies.service.MoviesService;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -49,6 +48,7 @@ public class MoviesServiceImpl implements MoviesService {
 	private String key;
 
 	@Override
+	@Transactional
 	public MoviesDTO getMoviesByParameter(Integer movieID, String movieName, Boolean saveAsFavorite) {
 
 		log.info("Building url");
@@ -70,8 +70,15 @@ public class MoviesServiceImpl implements MoviesService {
 					MoviesDTO.class);
 
 			if (saveAsFavorite) {
-//				persist.
+				log.info("Getting genre to persist");
+				GenreEntity genre = new GenreEntity();
+				genre = genresDAO.findById(response.getBody().getGenres().get(0).getId());
 
+				log.info("Building entity to persist");
+				MoviesEntity movie = new MoviesEntity();
+				movie.builder(response.getBody(), genre);
+
+				moviesDAO.create(movie);
 			}
 		} catch (Exception e) {
 			log.error("Error calling API");
@@ -90,7 +97,7 @@ public class MoviesServiceImpl implements MoviesService {
 
 	@Override
 	public GenresDTO getGenres() {
-		
+
 		log.info("Verify if genres already were saved");
 		if (veriFyGenreData().equals(new BigInteger("0"))) {
 
