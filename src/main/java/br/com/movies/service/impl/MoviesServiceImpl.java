@@ -19,6 +19,8 @@ import br.com.movies.dao.GenresDAO;
 import br.com.movies.dao.MoviesDAO;
 import br.com.movies.dto.GenresDTO;
 import br.com.movies.dto.MoviesDTO;
+import br.com.movies.dto.ReviewDTO;
+import br.com.movies.dto.UpcomingDTO;
 import br.com.movies.entity.GenreEntity;
 import br.com.movies.entity.MoviesEntity;
 import br.com.movies.service.MoviesService;
@@ -136,6 +138,55 @@ public class MoviesServiceImpl implements MoviesService {
 	@Transactional(readOnly = true)
 	private BigInteger veriFyGenreData() {
 		return moviesDAO.veriFyGenreData();
+	}
+
+	@Override
+	public UpcomingDTO getUpcoming(String language) {
+
+		log.info("Building upcoming url");
+		String urlUpcoming = url.concat("/movie/upcoming?api_key=").concat(key).concat("&language=").concat(language)
+				.concat("&page=1");
+
+		HttpEntity<UpcomingDTO> response = null;
+		HttpHeaders headers = mountHeaders();
+
+		try {
+			response = restTemplate.exchange(urlUpcoming, HttpMethod.GET, new HttpEntity<>("parameters", headers),
+					UpcomingDTO.class);
+
+			log.debug("Upcoming Response: " + response.toString());
+
+			return response.getBody();
+
+		} catch (Exception e) {
+			log.error("Error calling API upcoming: " + e.getMessage());
+			return null;
+		}
+	}
+
+	@Override
+	public ReviewDTO getReviews(Integer id, String language) {
+
+		log.info("Building reviews url");
+		String urlUpcoming = url.concat("/movie/").concat(String.valueOf(id)).concat("/reviews?api_key").concat(key)
+				.concat("&language=").concat(language);
+
+		HttpEntity<ReviewDTO> response = null;
+		HttpHeaders headers = mountHeaders();
+
+		try {
+			response = restTemplate.exchange(urlUpcoming, HttpMethod.GET, new HttpEntity<>("parameters", headers),
+					ReviewDTO.class);
+
+			log.debug("Reviews Response: " + response.toString());
+
+			return response.getBody();
+
+		} catch (Exception e) {
+			log.error("Error calling API Reviews: " + e.getMessage());
+			return null;
+		}
+
 	}
 
 }

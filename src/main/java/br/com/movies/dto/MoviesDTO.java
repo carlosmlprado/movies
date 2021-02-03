@@ -30,6 +30,9 @@ public class MoviesDTO implements Serializable {
 
 	private Integer budget;
 	
+	@JsonProperty("genre_ids")
+	List<Integer> genreIds;
+	
 	List<GenresAttributesDTO> genres;
 	
 	private String overview;
