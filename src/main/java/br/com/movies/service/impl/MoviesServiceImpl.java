@@ -19,6 +19,7 @@ import br.com.movies.dao.GenresDAO;
 import br.com.movies.dao.MoviesDAO;
 import br.com.movies.dto.GenresDTO;
 import br.com.movies.dto.MoviesDTO;
+import br.com.movies.dto.RatingResponseDTO;
 import br.com.movies.dto.ReviewDTO;
 import br.com.movies.dto.UpcomingDTO;
 import br.com.movies.entity.GenreEntity;
@@ -177,6 +178,37 @@ public class MoviesServiceImpl implements MoviesService {
 		try {
 			response = restTemplate.exchange(urlUpcoming, HttpMethod.GET, new HttpEntity<>("parameters", headers),
 					ReviewDTO.class);
+
+			log.debug("Reviews Response: " + response.toString());
+
+			return response.getBody();
+
+		} catch (Exception e) {
+			log.error("Error calling API Reviews: " + e.getMessage());
+			return null;
+		}
+
+	}
+
+	@Override
+	public RatingResponseDTO createRate(Integer id, Double rate) {
+		
+		log.info("Building rating url");
+		
+		String urlRating = url.concat("/movie/").concat(String.valueOf(id)).concat("/rating?api_key").concat(key);
+		
+		RatingResponseDTO rating = new RatingResponseDTO();
+		rating.setValue(String.valueOf(rate));
+		
+		HttpHeaders headers = mountHeaders();
+		HttpEntity<RatingResponseDTO> response = new HttpEntity<>(rating, headers);
+
+		try {
+			
+			restTemplate.postForObject(urlRating, response, RatingResponseDTO.class);
+			
+//			response = restTemplate.exchange(urlRating, HttpMethod.POST, new HttpEntity<>("parameters", headers),
+//					RatingResponseDTO.class);
 
 			log.debug("Reviews Response: " + response.toString());
 

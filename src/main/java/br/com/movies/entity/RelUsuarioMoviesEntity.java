@@ -22,9 +22,8 @@ public class RelUsuarioMoviesEntity {
 	@Column(name = "usuario_movie_id")
 	public Integer id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "usuario_id")
-	private UsuarioEntity usuario;
+	@Column(name = "usuario_id")
+	private Integer usuarioId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "movie_id")

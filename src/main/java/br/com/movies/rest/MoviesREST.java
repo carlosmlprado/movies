@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,8 +13,10 @@ import com.google.gson.Gson;
 
 import br.com.movies.dto.GenresDTO;
 import br.com.movies.dto.MoviesDTO;
+import br.com.movies.dto.RatingResponseDTO;
 import br.com.movies.dto.ReviewDTO;
 import br.com.movies.dto.UpcomingDTO;
+import br.com.movies.feign.GetLoginFeign;
 import br.com.movies.service.MoviesService;
 import lombok.AllArgsConstructor;
 
@@ -25,6 +28,7 @@ public class MoviesREST {
 
 //	Not using Autowired to avoid memory leak
 	private MoviesService moviesService;
+	private GetLoginFeign login;
 
 	@GetMapping("/")
 	public String test() {
@@ -78,6 +82,25 @@ public class MoviesREST {
 			return new ResponseEntity<>(new Gson().toJson(response), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
+	}
+
+	@PostMapping("/createRate/{movieId}/{rate}")
+	public ResponseEntity<?> createRate(@PathVariable(name = "movieId") Integer movieId,
+			@PathVariable(name = "rate") Double rate){
+
+		RatingResponseDTO response = moviesService.createRate(movieId, rate);
+
+		if (null != response) {
+			return new ResponseEntity<>(new Gson().toJson(response), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(new Gson().toJson(response), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	@GetMapping("/getLogin/{cpf}/{name}")
+	public ResponseEntity<?> getLogin(@PathVariable("cpf") String cpf, @PathVariable("name") String name){
+		
+		return new ResponseEntity<>(new Gson().toJson(login.getLogin(cpf, name)), HttpStatus.OK);
 	}
 
 }

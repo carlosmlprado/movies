@@ -2,6 +2,7 @@ package br.com.movies.service;
 
 import br.com.movies.dto.GenresDTO;
 import br.com.movies.dto.MoviesDTO;
+import br.com.movies.dto.RatingResponseDTO;
 import br.com.movies.dto.ReviewDTO;
 import br.com.movies.dto.UpcomingDTO;
 
@@ -31,4 +32,11 @@ public interface MoviesService {
 	 * @return Reviews from the movie
 	 */
 	public ReviewDTO getReviews(Integer id, String language);
+	
+	/**
+	 * 
+	 * @param id
+	 * @return MEssage code with success or not
+	 */
+	public RatingResponseDTO createRate(Integer id, Double rate);
 }
