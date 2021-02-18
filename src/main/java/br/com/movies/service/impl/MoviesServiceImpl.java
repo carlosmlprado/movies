@@ -34,15 +34,15 @@ public class MoviesServiceImpl implements MoviesService {
 	@Autowired
 	private RestTemplate restTemplate;
 
+	private MoviesDAO moviesDAO;
+	private GenresDAO genresDAO;
+
 	public MoviesServiceImpl(MoviesDAO moviesDAO, GenresDAO genresDAO) {
 		super();
 		this.moviesDAO = moviesDAO;
 		this.genresDAO = genresDAO;
 	}
-
-	private MoviesDAO moviesDAO;
-	private GenresDAO genresDAO;
-
+	
 	@Value("${url.api}")
 	private String url;
 	@Value("${token}")
