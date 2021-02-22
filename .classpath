@@ -28,6 +28,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/carlo/.m2/repository/jpa-jdbc/jpa-jdbc-2.1.7.RELEASE.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

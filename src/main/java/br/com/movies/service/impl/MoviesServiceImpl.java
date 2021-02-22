@@ -33,16 +33,11 @@ public class MoviesServiceImpl implements MoviesService {
 
 	@Autowired
 	private RestTemplate restTemplate;
-
+	@Autowired
 	private MoviesDAO moviesDAO;
+	@Autowired
 	private GenresDAO genresDAO;
 
-	public MoviesServiceImpl(MoviesDAO moviesDAO, GenresDAO genresDAO) {
-		super();
-		this.moviesDAO = moviesDAO;
-		this.genresDAO = genresDAO;
-	}
-	
 	@Value("${url.api}")
 	private String url;
 	@Value("${token}")
@@ -192,21 +187,21 @@ public class MoviesServiceImpl implements MoviesService {
 
 	@Override
 	public RatingResponseDTO createRate(Integer id, Double rate) {
-		
+
 		log.info("Building rating url");
-		
+
 		String urlRating = url.concat("/movie/").concat(String.valueOf(id)).concat("/rating?api_key").concat(key);
-		
+
 		RatingResponseDTO rating = new RatingResponseDTO();
 		rating.setValue(String.valueOf(rate));
-		
+
 		HttpHeaders headers = mountHeaders();
 		HttpEntity<RatingResponseDTO> response = new HttpEntity<>(rating, headers);
 
 		try {
-			
+
 			restTemplate.postForObject(urlRating, response, RatingResponseDTO.class);
-			
+
 //			response = restTemplate.exchange(urlRating, HttpMethod.POST, new HttpEntity<>("parameters", headers),
 //					RatingResponseDTO.class);
 
