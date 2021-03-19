@@ -12,31 +12,37 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import br.com.movies.dao.GenresDAO;
-import br.com.movies.dao.MoviesDAO;
+import br.com.movies.dao.MovieDAO;
+import br.com.movies.dao.MovieGenreDAO;
 import br.com.movies.dto.GenresDTO;
-import br.com.movies.dto.MoviesDTO;
+import br.com.movies.dto.MovieDTO;
+import br.com.movies.dto.MoviesFromApiImdbDTO;
 import br.com.movies.dto.RatingResponseDTO;
 import br.com.movies.dto.ReviewDTO;
 import br.com.movies.dto.UpcomingDTO;
 import br.com.movies.entity.GenreEntity;
-import br.com.movies.entity.MoviesEntity;
-import br.com.movies.service.MoviesService;
+import br.com.movies.entity.MovieEntity;
+import br.com.movies.entity.RelMovieGenreEntity;
+import br.com.movies.service.MovieService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service("moviesService")
-public class MoviesServiceImpl implements MoviesService {
+public class MoviesServiceImpl implements MovieService {
 
 	@Autowired
 	private RestTemplate restTemplate;
 	@Autowired
-	private MoviesDAO moviesDAO;
+	private MovieDAO moviesDAO;
 	@Autowired
 	private GenresDAO genresDAO;
+	@Autowired
+	private MovieGenreDAO movieGenreDAO;
 
 	@Value("${url.api}")
 	private String url;
@@ -47,7 +53,7 @@ public class MoviesServiceImpl implements MoviesService {
 
 	@Override
 	@Transactional
-	public MoviesDTO getMoviesByParameter(Integer movieID, String movieName, Boolean saveAsFavorite) {
+	public MoviesFromApiImdbDTO getMoviesByParameter(Integer movieID, String movieName) {
 
 		log.info("Building url");
 		String urlFinal;
@@ -58,26 +64,15 @@ public class MoviesServiceImpl implements MoviesService {
 			urlFinal = url.concat("/search/movie?api_key=").concat(key).concat("&query=").concat(movieName);
 		}
 
-		HttpEntity<MoviesDTO> response = null;
+		HttpEntity<MoviesFromApiImdbDTO> response = null;
 
 		try {
 			log.info("Building headers");
 			HttpHeaders headers = mountHeaders();
 
 			response = restTemplate.exchange(urlFinal, HttpMethod.GET, new HttpEntity<>("parameters", headers),
-					MoviesDTO.class);
+					MoviesFromApiImdbDTO.class);
 
-			if (saveAsFavorite) {
-				log.info("Getting genre to persist");
-				GenreEntity genre = new GenreEntity();
-				genre = genresDAO.findById(response.getBody().getGenres().get(0).getId());
-
-				log.info("Building entity to persist");
-				MoviesEntity movie = new MoviesEntity();
-				movie.builder(response.getBody(), genre);
-
-				moviesDAO.create(movie);
-			}
 		} catch (Exception e) {
 			log.error("Error calling API");
 			return null;
@@ -190,7 +185,7 @@ public class MoviesServiceImpl implements MoviesService {
 
 		log.info("Building rating url");
 
-		String urlRating = url.concat("/movie/").concat(String.valueOf(id)).concat("/rating?api_key").concat(key);
+		String urlRating = url.concat("/movie/").concat(String.valueOf(id)).concat("/rating?api_key=").concat(key);
 
 		RatingResponseDTO rating = new RatingResponseDTO();
 		rating.setValue(String.valueOf(rate));
@@ -202,8 +197,8 @@ public class MoviesServiceImpl implements MoviesService {
 
 			restTemplate.postForObject(urlRating, response, RatingResponseDTO.class);
 
-//			response = restTemplate.exchange(urlRating, HttpMethod.POST, new HttpEntity<>("parameters", headers),
-//					RatingResponseDTO.class);
+			response = restTemplate.exchange(urlRating, HttpMethod.POST, new HttpEntity<>("parameters", headers),
+					RatingResponseDTO.class);
 
 			log.debug("Reviews Response: " + response.toString());
 
@@ -212,6 +207,54 @@ public class MoviesServiceImpl implements MoviesService {
 		} catch (Exception e) {
 			log.error("Error calling API Reviews: " + e.getMessage());
 			return null;
+		}
+
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public MovieDTO saveMovie(MovieDTO movieDTO) {
+		log.info("Saving the movie");
+
+		MovieEntity moviesEntity = new MovieEntity();
+
+		try {
+			log.info("Checking if the movie is already persisted");
+
+			moviesEntity = moviesDAO.findByParam("movieApiId", movieDTO.getMovieApiId());
+
+			if (null == moviesEntity) {
+				log.info("Buildilng object moviesEntity");
+				moviesEntity = MovieEntity.builder(movieDTO);
+				log.debug("Object moviesEntity: " + moviesEntity);
+
+				moviesDAO.create(moviesEntity);
+				movieDTO.setId(moviesEntity.getId());
+
+				log.info("Buildilng object movieGenreEntity");
+
+				movieDTO.getGenreIds().stream().forEach(g -> {
+					RelMovieGenreEntity movieGenreEntity = new RelMovieGenreEntity();
+					movieGenreEntity.setMovieId(movieDTO.getId());
+					movieGenreEntity.setGenreId(g);
+
+					try {
+						movieGenreDAO.create(movieGenreEntity);
+
+					} catch (Exception e) {
+						log.error("Error creating relationship between movie and genres: " + e.getMessage());
+					}
+				});
+			} else {
+				movieDTO.setIdentifier(moviesEntity.getId());
+			}
+
+			return movieDTO;
+
+		} catch (Exception e) {
+			log.error("Error saving the movie: " + e.getMessage());
+
+			return new MovieDTO();
 		}
 
 	}

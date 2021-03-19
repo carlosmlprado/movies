@@ -15,7 +15,7 @@ import lombok.Data;
 @Entity
 @Table(name = "rel_usuario_movies")
 @Data
-public class RelUsuarioMoviesEntity {
+public class RelUsuarioMovieEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +27,6 @@ public class RelUsuarioMoviesEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "movie_id")
-	private MoviesEntity movie;
+	private MovieEntity movie;
 
 }

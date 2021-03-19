@@ -7,11 +7,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.hibernate.BasicEntity;
-import br.com.movies.dao.MoviesDAO;
-import br.com.movies.entity.MoviesEntity;
+import br.com.movies.dao.MovieDAO;
+import br.com.movies.entity.MovieEntity;
 
 @Repository("moviesDAO")
-public class MoviesDAOImpl extends BasicEntity<MoviesEntity, Integer> implements MoviesDAO {
+public class MoviesDAOImpl extends BasicEntity<MovieEntity, Integer> implements MovieDAO {
 
 	@Override
 	@Transactional(readOnly = true)

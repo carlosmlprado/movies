@@ -3,6 +3,8 @@ package br.com.movies.dao;
 import java.io.Serializable;
 import java.util.List;
 
+import br.com.hibernate.exception.GenericDAOServiceException;
+
 public interface GenericDAO<T, PK extends Serializable> {
 
 	/**
@@ -20,5 +22,20 @@ public interface GenericDAO<T, PK extends Serializable> {
 	 * 
 	 */
 	T findById(final PK id);
+	
+	/**
+	 * 
+	 * @param entityList
+	 * @throws GenericDAOServiceException
+	 */
+	void create(List<T> entityList) throws GenericDAOServiceException;
+	
+	/**
+	 * 
+	 * @param namedParam
+	 * @param valueParam
+	 * @return
+	 */
+	T findByParam(final String namedParam, final Object valueParam);
 	
 }

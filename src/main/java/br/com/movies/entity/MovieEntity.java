@@ -5,17 +5,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import br.com.movies.dto.MoviesDTO;
+import br.com.movies.dto.MovieDTO;
 import lombok.Data;
 
 @Entity
 @Table(name = "movies")
 @Data
-public class MoviesEntity {
+public class MovieEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,9 +25,6 @@ public class MoviesEntity {
 
 	@Column(name = "backdrop_path")
 	private String backDropPath;
-
-	@Column(name = "homepage")
-	private String homePage;
 
 	@Column(name = "release_date")
 	private String releaseDate;
@@ -43,26 +38,25 @@ public class MoviesEntity {
 	@Column(name = "overview")
 	private String overview;
 
+	@Column(name = "posterPath")
+	private String posterPath;
+
 	@Column(name = "movie_api_id")
 	private Integer movieApiId;
 
-	@ManyToOne
-	@JoinColumn(name = "genre_id")
-	private GenreEntity genre;
+	public static MovieEntity builder(MovieDTO movie) {
 
-	public MoviesEntity builder(MoviesDTO movies, GenreEntity genre) {
+		MovieEntity movieEntity = new MovieEntity();
 
-		this.setIsAbove18(movies.getIsAbove18());
-		this.setBackDropPath(movies.getBackDropPath());
-		this.setHomePage(movies.getHomePage());
-		this.setReleaseDate(movies.getReleaseDate());
-		this.setOriginalTitle(movies.getOriginalTitle());
-		this.setBudget(movies.getBudget());
-		this.setOverview(movies.getOverview());
-		this.setGenre(genre);
-		this.setMovieApiId(movies.getMovieApiId());
+		movieEntity.setIsAbove18(movie.getAdult());
+		movieEntity.setBackDropPath(movie.getBackDropPath());
+		movieEntity.setReleaseDate(movie.getReleaseDate());
+		movieEntity.setOriginalTitle(movie.getOriginalTitle());
+		movieEntity.setOverview(movie.getOverview());
+		movieEntity.setMovieApiId(movie.getMovieApiId());
+		movieEntity.setPosterPath(movie.getPosterPath());
 
-		return this;
+		return movieEntity;
 	}
 
 }
