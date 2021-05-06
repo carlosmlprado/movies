@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -77,8 +78,8 @@ public class MoviesServiceImpl implements MovieService {
 			log.error("Error calling API");
 			return null;
 		}
+		response.getBody().getGenreIds().stream().filter(g -> g.equals("Joaquim")).forEach(System.out::print);
 		return response.getBody();
-
 	}
 
 	private HttpHeaders mountHeaders() {
@@ -132,7 +133,7 @@ public class MoviesServiceImpl implements MovieService {
 	}
 
 	@Override
-	public UpcomingDTO getUpcoming(String language) {
+	public Optional<UpcomingDTO> getUpcoming(String language) {
 
 		log.info("Building upcoming url");
 		String urlUpcoming = url.concat("/movie/upcoming?api_key=").concat(key).concat("&language=").concat(language)
@@ -141,18 +142,12 @@ public class MoviesServiceImpl implements MovieService {
 		HttpEntity<UpcomingDTO> response = null;
 		HttpHeaders headers = mountHeaders();
 
-		try {
-			response = restTemplate.exchange(urlUpcoming, HttpMethod.GET, new HttpEntity<>("parameters", headers),
-					UpcomingDTO.class);
+		response = restTemplate.exchange(urlUpcoming, HttpMethod.GET, new HttpEntity<>("parameters", headers),
+				UpcomingDTO.class);
 
-			log.debug("Upcoming Response: " + response.toString());
+		log.debug("Upcoming Response: " + response.toString());
 
-			return response.getBody();
-
-		} catch (Exception e) {
-			log.error("Error calling API upcoming: " + e.getMessage());
-			return null;
-		}
+		return Optional.ofNullable(response.getBody());
 	}
 
 	@Override

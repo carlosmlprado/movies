@@ -1,5 +1,7 @@
 package br.com.movies.rest;
 
+import java.util.Optional;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -33,8 +35,8 @@ public class MoviesREST {
 	private GetLoginFeign login;
 
 	@GetMapping("/")
-	public String test() {
-		return "It works!";
+	public ResponseEntity<?> test() {
+		return new ResponseEntity<>(new Gson().toJson("It works!"), HttpStatus.OK);
 	}
 
 	@GetMapping("/getMovies/{movieId}/{movieName}")
@@ -55,13 +57,12 @@ public class MoviesREST {
 
 		GenresDTO response = movieService.getGenres();
 		return new ResponseEntity<>(new Gson().toJson(response), HttpStatus.OK);
-
 	}
 
 	@GetMapping("/getUpcoming/{language}")
 	public ResponseEntity<?> getUpcoming(@PathVariable(value = "language") String language) {
 
-		UpcomingDTO response = movieService.getUpcoming(language);
+		Optional<UpcomingDTO> response = movieService.getUpcoming(language);
 
 		if (null != response) {
 			return new ResponseEntity<>(new Gson().toJson(response), HttpStatus.OK);

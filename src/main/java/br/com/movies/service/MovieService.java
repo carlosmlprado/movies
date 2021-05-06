@@ -1,5 +1,7 @@
 package br.com.movies.service;
 
+import java.util.Optional;
+
 import br.com.movies.dto.GenresDTO;
 import br.com.movies.dto.MovieDTO;
 import br.com.movies.dto.MoviesFromApiImdbDTO;
@@ -26,7 +28,7 @@ public interface MovieService {
 	 * @param language (us or pt)
 	 * @return10 movies upcoming
 	 */
-	UpcomingDTO getUpcoming(String language);
+	Optional<UpcomingDTO> getUpcoming(String language);
 
 	/**
 	 * 
