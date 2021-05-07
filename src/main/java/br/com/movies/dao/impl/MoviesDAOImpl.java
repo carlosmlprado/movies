@@ -6,7 +6,7 @@ import org.hibernate.SQLQuery;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.hibernate.BasicEntity;
+import br.com.movies.entity.BasicEntity;
 import br.com.movies.dao.MovieDAO;
 import br.com.movies.entity.MovieEntity;
 

@@ -9,7 +9,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.hibernate.exception.GenericDAOServiceException;
+import br.com.movies.exception.GenericDAOServiceException;
 import br.com.movies.dao.GenericDAO;
 
 public abstract class HibernateDAOServiceImpl<T, PK extends Serializable> extends HibernateDaoSupport

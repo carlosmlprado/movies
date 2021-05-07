@@ -81,11 +81,10 @@
 		</dependency>
 
 		<dependency>
-			<groupId>br.com.movies</groupId>
-			<artifactId>hibernate</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>5.4.2.Final</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

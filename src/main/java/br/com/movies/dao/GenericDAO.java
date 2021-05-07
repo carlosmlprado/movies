@@ -3,7 +3,8 @@ package br.com.movies.dao;
 import java.io.Serializable;
 import java.util.List;
 
-import br.com.hibernate.exception.GenericDAOServiceException;
+import br.com.movies.exception.GenericDAOServiceException;
+
 
 public interface GenericDAO<T, PK extends Serializable> {
 
