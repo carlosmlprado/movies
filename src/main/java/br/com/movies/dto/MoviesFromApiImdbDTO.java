@@ -12,8 +12,6 @@ public class MoviesFromApiImdbDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private Integer id;
-
 //	Search by id
 	@JsonProperty("adult")
 	private Boolean isAbove18;

@@ -84,7 +84,7 @@ public class MoviesServiceImpl implements MovieService {
 
 	private HttpHeaders mountHeaders() {
 		HttpHeaders headers = new HttpHeaders();
-		headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+		headers.setAccept(Collections.singletonList(MediaType.ALL));
 		headers.add("Authorization", "Bearer ".concat(token));
 		return headers;
 	}
