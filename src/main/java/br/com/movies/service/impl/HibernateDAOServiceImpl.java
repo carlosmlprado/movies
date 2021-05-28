@@ -4,10 +4,16 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ReflectionUtils;
+import org.springframework.util.ReflectionUtils.FieldCallback;
 
 import br.com.movies.exception.GenericDAOServiceException;
 import br.com.movies.dao.GenericDAO;
@@ -105,5 +111,7 @@ public abstract class HibernateDAOServiceImpl<T, PK extends Serializable> extend
 
 		return (T) criteria.uniqueResult();
 	}
+	
+	
 
 }

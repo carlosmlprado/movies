@@ -78,7 +78,6 @@ public class MoviesServiceImpl implements MovieService {
 			log.error("Error calling API");
 			return null;
 		}
-		response.getBody().getGenreIds().stream().filter(g -> g.equals("Joaquim")).forEach(System.out::print);
 		return response.getBody();
 	}
 
@@ -252,6 +251,26 @@ public class MoviesServiceImpl implements MovieService {
 			return new MovieDTO();
 		}
 
+	}
+
+	@Override
+	public MovieDTO getMovie(String name) {
+
+		List<MovieEntity> moviesEntity = new ArrayList<MovieEntity>();
+		MovieDTO movieDTO = new MovieDTO();
+
+		try {
+			movieDTO = moviesDAO.findByParam(name);
+
+			if (moviesEntity.isEmpty()) {
+				log.info("Parameter not found");
+				return movieDTO;
+			}
+
+		} catch (Exception e) {
+			log.error("Error getting the movie: " + e.getMessage());
+		}
+		return movieDTO;
 	}
 
 }

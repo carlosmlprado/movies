@@ -51,4 +51,11 @@ public interface MovieService {
 	 */
 	MovieDTO saveMovie(MovieDTO moviesDTO);
 
+	/**
+	 * 
+	 * @param name
+	 * @return
+	 */
+	MovieDTO getMovie(String name);
+
 }
